@@ -1,0 +1,6 @@
+name: icml
+dependencies:
+  - python=3.8
+  - matplotlib
+  - scipy
+  - numpy
