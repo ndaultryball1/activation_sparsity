@@ -42,13 +42,13 @@ def u2( prev, q22, z1, z2):
     res = np.sqrt( q22 ) * ( prev * z1 + np.sqrt( 1 - prev ** 2 ) * z2 )
     return( res )
 
-def c( activation_func, prev, q11, q22, sigma_w, sigma_b ):
+def correlation_map( activation_func, prev, q11, q22,  sigma_b, sigma_w, tau ):
     def integrator( z1, z2 ):
-        inner = activation_func( u1( q11, z1 ) ) * activation_func( u2( prev, q22, z1, z2 ) )
+        inner = activation_func( u1( q11, z1 ), tau ) * activation_func( u2( prev, q22, z1, z2 ), tau )
         integrand = inner * np.exp( - ( z1 ** 2 + z2 **2 ) / 2 )
         return( integrand )
     z1_range = np.inf
     z2_range = np.inf
-    integral = dblquad( integrator, -z1_range, z1_range, -z2_range, z2_range )
-    res = 1 / ( 2 * np.pi ) * sigma_w ** 2 * integral + sigma_b ** 2
+    integral = dblquad( integrator, -z1_range, z1_range, -z2_range, z2_range )[ 0 ]
+    res = ( 1 / ( 2 * np.pi ) ) * sigma_w ** 2 * integral + sigma_b ** 2
     return( res )
