@@ -1,5 +1,7 @@
 import numpy as np
+import scipy
 from scipy.integrate import simpson, dblquad
+from scipy.special import erfc
 
 # Activation functions
 
@@ -20,6 +22,7 @@ def hard( x, tau ):
 # Length maps
 
 def q( activation_func, prev, sigma_b, sigma_w, tau ):
+    # Length map by doing the integral
     range = 100
     step = 0.1
     z = np.arange( -range, range, step )
@@ -32,6 +35,13 @@ def soft_q( prev, sigma_b, sigma_w, tau ):
 
 def hard_q( prev, sigma_b, sigma_w, tau ):
     res = q( hard, prev, sigma_b, sigma_w, tau )
+    return( res )
+
+def V_soft_analytic( q, sigma_b, sigma_w, tau):
+    # Analytic length map for soft thresholding
+    x = tau / np.sqrt( q )
+    # res = 1 / ( 2 * np.sqrt( 2 ) ) * q * np.square( sigma_w ) * ( erfc( x ) + ( 2 / np.sqrt( np.pi ) ) * x * np.exp ( - x ** 2) ) + sigma_b ** 2
+    res = 2 * sigma_w ** 2 * ( ( q + tau ) ** 2 *( 1 - scipy.stats.norm.cdf( x ) ) - (( np.sqrt( q ) * tau ) / np.sqrt( 2 * np.pi ) )* np.exp( - x ** 2 / 2 ) ) + sigma_b ** 2
     return( res )
 
 # Correlation maps
